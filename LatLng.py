@@ -36,7 +36,7 @@ def generate_random_lat_lng_data(lat, lon, num_rows, file_name, file_type):
             #output.write('{%.6f}, {%.6f}\n'%(lon+dec_lon, lat+dec_lat))
     print('Lat Lng Generation Complete!')
 
-generate_random_lat_lng_data(latitude, longitude, number_of_lat_lng, csv_file, file_type)
+#generate_random_lat_lng_data(latitude, longitude, number_of_lat_lng, csv_file, file_type)
     
     
     
@@ -87,23 +87,50 @@ def has_street_view(query):
 import csv
 
 
-file_name = 'random_lat_lon.csv'
+input_file_name = 'random_lat_lon.csv'
+output_file_name = 'output.csv'
 
-file = open(file_name)
-reader = csv.reader(file)
+#file = open(file_name)
+#reader = csv.reader(file)
+#
+############appending new column header##########
+#header = next(reader)
+#header.append('Status')
+#print(header)
+#
+#firstline = True
+#
+#for line in reader:
+#    if firstline:#skip first line
+#        firstline = False
+#        continue
+#    lat_lng_row = line[2] + ', ' + line[3]
+#    lat_lng_row = ''.join( c for c in str(lat_lng_row) if  c not in "[']")
+#    print(lat_lng_row)
+#    print(has_street_view(lat_lng_row))
 
-firstline = True
+import csv
 
-for line in reader:
-    if firstline:#skip first line
-        firstline = False
-        continue
-    lat_lng_row = line[2] + ', ' + line[3]
-    lat_lng_row = ''.join( c for c in str(lat_lng_row) if  c not in "[']")
-    print(lat_lng_row)
-    print(has_street_view(lat_lng_row))
+def check_gsv_status(input_file, output_file):
+    with open(input_file,'r') as csvinput:
+        with open(output_file, 'w') as csvoutput:
+            writer = csv.writer(csvoutput, lineterminator='\n')
+            reader = csv.reader(csvinput)
+            
+            all = []
+            row = next(reader)
+            row.append('Status')
+            all.append(row)
+            
+            for row in reader:
+                lat_lng_row = row[2] + ', ' + row[3]
+                lat_lng_row = ''.join( c for c in str(lat_lng_row) if  c not in "[']")
+                row.append(has_street_view(lat_lng_row))
+                all.append(row)
+                
+            writer.writerows(all)
+            print('Status update complete')
 
-
-
+check_gsv_status(input_file_name, output_file_name)
 
 print('working!')
